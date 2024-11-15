@@ -1,10 +1,11 @@
 import User from '../models/user.model.js'
 import jwt from 'jsonwebtoken'
 import { redis } from '../lib/redis.js'
+import e from 'express';
 
 const generateToken = (id) => {
-  const accessToken = jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '15m' });
-  const refreshToken = jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  const accessToken = jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+  const refreshToken = jwt.sign({ id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
   return { accessToken, refreshToken };
 }
 
@@ -70,7 +71,7 @@ export const logout = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
     if (refreshToken) {
-      const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+      const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
       await redis.del(`refreshToken:${decoded.id}`);
       res.cookie('accessToken', '', {
         httpOnly: true,
@@ -95,10 +96,29 @@ export const logout = async (req, res) => {
   }
 }
 
-// export const refreshToken = async (req, res) => {
-//   try {
-
-//   } catch (error) {
-//     res.status(500).json({ message: error.message })
-//   }
-// }
+export const refreshToken = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      return res.status(400).json({ message: 'refresh token not found' })
+    }
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    const storedRefreshToken = await redis.get(`refreshToken:${decoded.id}`);
+    if (storedRefreshToken !== refreshToken) {
+      return res.status(400).json({ message: 'refresh token not valid' })
+    }
+    else {
+      const accessToken = jwt.sign({ id: decoded.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+      res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        maxAge: 15 * 60 * 1000
+      })
+      res.status(200).json({ message: 'access token refreshed' })
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: "something went wrong while refreshing token", error: error.message })
+  }
+}
