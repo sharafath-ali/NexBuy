@@ -1,7 +1,6 @@
 import User from '../models/user.model.js'
 import jwt from 'jsonwebtoken'
 import { redis } from '../lib/redis.js'
-import e from 'express';
 
 const generateToken = (id) => {
   const accessToken = jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
