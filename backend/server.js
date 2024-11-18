@@ -2,6 +2,7 @@ import express from "express"
 import { configDotenv } from "dotenv";
 import authRoutes from "./routes/auth.route.js"
 import productRoutes from "./routes/product.route.js"
+import cartRoutes from "./routes/cart.route.js"
 import cookieParser from "cookie-parser";
 import { connectDB } from "./lib/db.js"
 import morgan from "morgan";
@@ -22,3 +23,4 @@ app.listen(Port, () => {
 
 app.use("/api/auth", authRoutes)
 app.use("/api/product", productRoutes)
+app.use("/api/cart", cartRoutes)
