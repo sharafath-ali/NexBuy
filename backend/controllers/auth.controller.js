@@ -121,3 +121,12 @@ export const refreshToken = async (req, res) => {
     res.status(500).json({ message: "something went wrong while refreshing token", error: error.message })
   }
 }
+
+export const getProfile = async (req, res) => {
+  try {
+    const user = req.user;
+    res.status(200).json({ user })
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
