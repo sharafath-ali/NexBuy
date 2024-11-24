@@ -1,11 +1,29 @@
 import { Route, Routes } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import SignupPage from "./pages/SignupPage";
-import LoginPage from "./pages/LoginPage";
 import Navbar from "./components/Navbar";
 import { Toaster } from "react-hot-toast";
+import { useUserStore } from "./stores/useUserStore";
+import { useEffect } from "react";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { Navigate } from "react-router-dom";
+import { lazy, Suspense } from 'react';
+import LoadingSpinner from "./components/LoadingSpinner";
 
 function App() {
+
+  const HomePage = lazy(() => import('./pages/HomePage'));
+  const LoginPage = lazy(() => import('./pages/LoginPage'));
+  const SignupPage = lazy(() => import('./pages/SignupPage'));
+
+  const { user, checkAuth, checkingAuth } = useUserStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  if (checkingAuth) {
+    return <LoadingSpinner />;
+  }
+  
   return (
     <div className="min-h-screen bg-gray-900 text-white relative overflow-hidden">
       < div className='absolute inset-0 overflow-hidden'>
@@ -14,14 +32,16 @@ function App() {
         </div>
       </div>
       <div className='relative z-50 pt-20'>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/login" element={<LoginPage />} />
-      </Routes>
+        <Suspense fallback={<LoadingSpinner />}>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<ProtectedRoute user={user} >  <HomePage /> </ProtectedRoute>} />
+            <Route path="/signup" element={user ? <Navigate to="/" /> : <SignupPage />} />
+            <Route path="/login" element={user ? <Navigate to="/" /> : <LoginPage />} />
+          </Routes>
+        </Suspense>
       </div>
-      <Toaster/>
+      <Toaster />
     </div >
   );
 }

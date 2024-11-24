@@ -1,7 +1,8 @@
 
 function HomePage() {
+  // console.log(user,'ddddddddddddddddddddddddddddddddd')
   return (
-    <div>HomePage</div>
+    <div>user.name</div>
   )
 }
 
