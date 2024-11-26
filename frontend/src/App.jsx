@@ -13,6 +13,7 @@ function App() {
   const HomePage = lazy(() => import('./pages/HomePage'));
   const LoginPage = lazy(() => import('./pages/LoginPage'));
   const SignupPage = lazy(() => import('./pages/SignupPage'));
+  const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 
   const { user, checkAuth, checkingAuth } = useUserStore();
 
@@ -23,7 +24,7 @@ function App() {
   if (checkingAuth) {
     return <LoadingSpinner />;
   }
-  
+
   return (
     <div className="min-h-screen bg-gray-900 text-white relative overflow-hidden">
       < div className='absolute inset-0 overflow-hidden'>
@@ -35,9 +36,10 @@ function App() {
         <Suspense fallback={<LoadingSpinner />}>
           <Navbar />
           <Routes>
-            <Route path="/" element={<ProtectedRoute user={user} >  <HomePage /> </ProtectedRoute>} />
+            <Route path="/" element={<ProtectedRoute user={user}>  <HomePage /> </ProtectedRoute>} />
             <Route path="/signup" element={user ? <Navigate to="/" /> : <SignupPage />} />
             <Route path="/login" element={user ? <Navigate to="/" /> : <LoginPage />} />
+            <Route path="/secret-dashboard" element={user?.role === "admin" ? <AdminDashboard /> : <Navigate to="/" />} />
           </Routes>
         </Suspense>
       </div>

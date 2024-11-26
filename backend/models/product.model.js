@@ -27,19 +27,19 @@ const productSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  countInStock: {
-    type: Number,
-    // required: [true, "countInStock is required"],
-    default: 0
-  },
-  rating: {
-    type: Number,
-    default: 0
-  },
-  numReviews: {
-    type: Number,
-    default: 0
-  }
+  // countInStock: {
+  //   type: Number,
+  //   // required: [true, "countInStock is required"],
+  //   default: 0
+  // },
+  // rating: {
+  //   type: Number,
+  //   default: 0
+  // },
+  // numReviews: {
+  //   type: Number,
+  //   default: 0
+  // }
 
 }, { timestamps: true });
 
