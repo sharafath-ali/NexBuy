@@ -37,12 +37,19 @@ export const createproduct = async (req, res) => {
   try {
     const { name, description, price, category, image } = req.body;
 
-    let cloudinary = null
-    if (image) {
-      cloudinary = await cloudinary.uploader.upload(image, { folder: 'products' });
-    }
     if (!name || !description || !price || !category || !image) {
       return res.status(400).json({ message: 'Product data is required' });
+    }
+    let cloudinaryResponse = null;
+
+    if (image) {
+      try {
+        cloudinaryResponse = await cloudinary.uploader.upload(image, { folder: "products" });
+      }
+      catch (error) {
+        console.log(error.message)
+        return res.status(500).json({ message: error.message })
+      }
     }
 
     const product = await Product.create({
@@ -50,7 +57,7 @@ export const createproduct = async (req, res) => {
       description,
       price,
       category,
-      image: cloudinary?.secure_url ? cloudinary?.secure_url : ""
+      image: cloudinaryResponse?.secure_url ? cloudinaryResponse.secure_url : ""
     });
     res.status(201).json({ product })
   } catch (error) {
