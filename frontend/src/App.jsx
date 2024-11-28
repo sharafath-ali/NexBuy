@@ -14,6 +14,7 @@ function App() {
   const LoginPage = lazy(() => import('./pages/LoginPage'));
   const SignupPage = lazy(() => import('./pages/SignupPage'));
   const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+  const CategoryPage = lazy(() => import('./pages/CategoryPage'));
 
   const { user, checkAuth, checkingAuth } = useUserStore();
 
@@ -40,6 +41,7 @@ function App() {
             <Route path="/signup" element={user ? <Navigate to="/" /> : <SignupPage />} />
             <Route path="/login" element={user ? <Navigate to="/" /> : <LoginPage />} />
             <Route path="/secret-dashboard" element={user?.role === "admin" ? <AdminDashboard /> : <Navigate to="/" />} />
+            <Route path="/category/:category" element={<ProtectedRoute user={user}>  <CategoryPage /> </ProtectedRoute>} />
           </Routes>
         </Suspense>
       </div>
