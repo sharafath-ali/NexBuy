@@ -7,6 +7,7 @@ export const useCartStore = create((set, get) => ({
   coupon: null,
   total: 0,
   subtotal: 0,
+  loading : false,
   addToCart: async (product) => {
     try {
       const productId = product._id;
@@ -27,9 +28,23 @@ export const useCartStore = create((set, get) => ({
       toast.error(error.response.data.message || "An error occurred");
     }
   },
+
+  getCartItems: async () => {
+    try {
+      set({ loading: true });
+      const response = await axiosInstance.get("/cart");
+      set({ cart: response.data });
+      console.log(response.data);
+      get().calculateTotals(); 
+      set({ loading: false }); 
+    } catch (error) {
+      console.error("Error fetching cart items:", error);
+      toast.error(error.message || "An error occurred");
+    }
+  },
   calculateTotals: () => {
     const { cart, coupon } = get();
-    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const subtotal = cart?.reduce((sum, item) => sum + item.price * item.quantity, 0);
     let total = subtotal;
 
     if (coupon) {

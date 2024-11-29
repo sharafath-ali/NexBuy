@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { Navigate } from "react-router-dom";
 import { lazy, Suspense } from 'react';
 import LoadingSpinner from "./components/LoadingSpinner";
+import { useCartStore } from "./stores/useCartStore";
 
 function App() {
 
@@ -18,11 +19,19 @@ function App() {
 
   const { user, checkAuth, checkingAuth } = useUserStore();
 
+  const { getCartItems, loading } = useCartStore();
+
   useEffect(() => {
     checkAuth();
   }, []);
 
-  if (checkingAuth) {
+  useEffect(() => {
+    if (!user) return;
+
+    getCartItems();
+  }, [getCartItems, user]);
+
+  if (checkingAuth || loading) {
     return <LoadingSpinner />;
   }
 
