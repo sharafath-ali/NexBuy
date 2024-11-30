@@ -6,13 +6,14 @@ import LoadingSpinner from "./LoadingSpinner";
 
 const PeopleAlsoBought = () => {
   const [recommendations, setRecommendations] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
-        const res = await axiosInstance.get("/products/recommendations");
-        setRecommendations(res.data);
+        setIsLoading(true);
+        const res = await axiosInstance.get("/product/recommendations");
+        setRecommendations(res.data.products);
       } catch (error) {
         toast.error(error.response.data.message || "An error occurred while fetching recommendations");
       } finally {

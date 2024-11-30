@@ -7,11 +7,11 @@ export const useCartStore = create((set, get) => ({
   coupon: null,
   total: 0,
   subtotal: 0,
-  loading : false,
+  loading: false,
   addToCart: async (product) => {
     try {
       const productId = product._id;
-      await axiosInstance.post(`/cart/${ productId}`);
+      await axiosInstance.post(`/cart/${productId}`);
       toast.success("Product added to cart");
 
       set((prevState) => {
@@ -35,8 +35,8 @@ export const useCartStore = create((set, get) => ({
       const response = await axiosInstance.get("/cart");
       set({ cart: response.data });
       console.log(response.data);
-      get().calculateTotals(); 
-      set({ loading: false }); 
+      get().calculateTotals();
+      set({ loading: false });
     } catch (error) {
       console.error("Error fetching cart items:", error);
       toast.error(error.message || "An error occurred");
@@ -53,5 +53,37 @@ export const useCartStore = create((set, get) => ({
     }
 
     set({ subtotal, total });
+  },
+
+  removeFromCart: async (productId) => {
+    try {
+      await axiosInstance.delete(`/cart/${productId}`);
+      toast.success("Product removed from cart");
+      set((prevState) => ({
+        cart: prevState.cart.filter((item) => item._id !== productId),
+      }));
+      get().calculateTotals();
+    } catch (error) {
+      toast.error(error.response.data.message || "An error occurred");
+    }
+  },
+
+  updateQuantity: async (productId, quantity) => {
+    try {
+      if (quantity === 0) {
+        return get().removeFromCart(productId);
+      }
+      await axiosInstance.put(`/cart/${productId}`, { quantity });
+
+      set((prevState) => ({
+        cart: prevState.cart.map((item) =>
+          item._id === productId ? { ...item, quantity } : item
+        ),
+      }))
+      toast.success("Quantity updated successfully", { duration: 500 });
+      get().calculateTotals();
+    } catch (error) {
+      toast.error(error.response.data.message || "An error occurred");
+    }
   },
 }));

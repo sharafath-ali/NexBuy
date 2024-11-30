@@ -102,6 +102,7 @@ export const getRecommendedProducts = async (req, res) => {
         }
       }
     ])
+    res.status(200).json({ products })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
