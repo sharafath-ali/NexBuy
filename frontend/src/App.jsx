@@ -8,6 +8,7 @@ import { Navigate } from "react-router-dom";
 import { lazy, Suspense } from 'react';
 import LoadingSpinner from "./components/LoadingSpinner";
 import { useCartStore } from "./stores/useCartStore";
+import CartPage from "./pages/CartPage";
 
 function App() {
 
@@ -51,6 +52,7 @@ function App() {
             <Route path="/login" element={user ? <Navigate to="/" /> : <LoginPage />} />
             <Route path="/secret-dashboard" element={user?.role === "admin" ? <AdminDashboard /> : <Navigate to="/" />} />
             <Route path="/category/:category" element={<ProtectedRoute user={user}>  <CategoryPage /> </ProtectedRoute>} />
+            <Route path="/cart" element={<ProtectedRoute user={user}>  <CartPage /> </ProtectedRoute>} />
           </Routes>
         </Suspense>
       </div>
