@@ -9,6 +9,7 @@ import { lazy, Suspense } from 'react';
 import LoadingSpinner from "./components/LoadingSpinner";
 import { useCartStore } from "./stores/useCartStore";
 import CartPage from "./pages/CartPage";
+import PurchaseSuccessPage from "./pages/PurchaseSuccessPage";
 
 function App() {
 
@@ -53,6 +54,7 @@ function App() {
             <Route path="/secret-dashboard" element={user?.role === "admin" ? <AdminDashboard /> : <Navigate to="/" />} />
             <Route path="/category/:category" element={<ProtectedRoute user={user}>  <CategoryPage /> </ProtectedRoute>} />
             <Route path="/cart" element={<ProtectedRoute user={user}>  <CartPage /> </ProtectedRoute>} />
+            <Route path="/purchase-success" element={ <PurchaseSuccessPage /> } />
           </Routes>
         </Suspense>
       </div>

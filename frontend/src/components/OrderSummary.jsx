@@ -5,9 +5,7 @@ import { MoveRight } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
 import { axiosInstance } from "../lib/axios";
 
-const stripePromise = loadStripe(
-  "pk_test_51KZYccCoOZF2UhtOwdXQl3vcizup20zqKqT9hVUIsVzsdBrhqbUI2fE0ZdEVLdZfeHjeyFXtqaNsyCJCmZWnjNZa00PzMAjlcL"
-);
+const stripePromise = loadStripe("pk_test_51MYn47SA5s2tZpn9RSuz4MvXyhyAfTkJwKw7p9X6B9kxx9bH8GMnFZcMSNYTAYr0BtJ9dUVf8jEFjlsKa2KzPd4U00uVYJhlu0");
 
 const OrderSummary = () => {
   const { total, subtotal, cart } = useCartStore();
@@ -22,7 +20,7 @@ const OrderSummary = () => {
 
   const handlePayment = async () => {
     const stripe = await stripePromise;
-    const res = await axiosInstance.post("/payments/create-checkout-session", {
+    const res = await axiosInstance.post("/payment/create-checkout-session", {
       products: cart,
       couponCode: coupon ? coupon.code : null,
     });
