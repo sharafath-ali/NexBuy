@@ -1,5 +1,5 @@
 import { ArrowRight, CheckCircle, HandHeart } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useCartStore } from "../stores/useCartStore";
 import { axiosInstance } from "../lib/axios";
@@ -9,11 +9,15 @@ const PurchaseSuccessPage = () => {
   const [isProcessing, setIsProcessing] = useState(true);
   const { clearCart } = useCartStore();
   const [error, setError] = useState(null);
-  console.log("clearCart")
+
+  const sessionId = useMemo(() => {
+    return new URLSearchParams(window.location.search).get("session_id");
+  }, [window.location.search]);
+
   useEffect(() => {
     const handleCheckoutSuccess = async (sessionId) => {
       try {
-        await axiosInstance.post("/payments/checkout-success", {
+        await axiosInstance.post("/payment/checkout-success", {
           sessionId,
         });
         clearCart();
@@ -23,15 +27,13 @@ const PurchaseSuccessPage = () => {
         setIsProcessing(false);
       }
     };
-
-    const sessionId = new URLSearchParams(window.location.search).get("session_id");
     if (sessionId) {
       handleCheckoutSuccess(sessionId);
     } else {
       setIsProcessing(false);
       setError("No session ID found in the URL");
     }
-  }, [clearCart]);
+  }, [sessionId]);
 
   if (isProcessing) return "Processing...";
 
