@@ -11,7 +11,7 @@ const CategoryPage = () => {
 
   useEffect(() => {
     fetchProductsByCategory(category);
-  }, [fetchProductsByCategory, category]);
+  }, [category]);
 
   return (
     <div className='min-h-screen'>

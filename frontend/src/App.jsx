@@ -10,6 +10,7 @@ import LoadingSpinner from "./components/LoadingSpinner";
 import { useCartStore } from "./stores/useCartStore";
 import CartPage from "./pages/CartPage";
 import PurchaseSuccessPage from "./pages/PurchaseSuccessPage";
+import PurchaseCancelPage from "./pages/PurchaseCancelPage"
 
 function App() {
 
@@ -31,7 +32,7 @@ function App() {
     if (!user) return;
 
     getCartItems();
-  }, [getCartItems, user]);
+  }, [user]);
 
   if (checkingAuth || loading) {
     return <LoadingSpinner />;
@@ -54,7 +55,8 @@ function App() {
             <Route path="/secret-dashboard" element={user?.role === "admin" ? <AdminDashboard /> : <Navigate to="/" />} />
             <Route path="/category/:category" element={<ProtectedRoute user={user}>  <CategoryPage /> </ProtectedRoute>} />
             <Route path="/cart" element={<ProtectedRoute user={user}>  <CartPage /> </ProtectedRoute>} />
-            <Route path="/purchase-success" element={ <PurchaseSuccessPage /> } />
+            <Route path="/purchase-success" element={<PurchaseSuccessPage />} />
+            <Route path='/purchase-cancel' element={<PurchaseCancelPage />} />
           </Routes>
         </Suspense>
       </div>

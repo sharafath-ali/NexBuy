@@ -8,10 +8,7 @@ import { axiosInstance } from "../lib/axios";
 const stripePromise = loadStripe("pk_test_51MYn47SA5s2tZpn9RSuz4MvXyhyAfTkJwKw7p9X6B9kxx9bH8GMnFZcMSNYTAYr0BtJ9dUVf8jEFjlsKa2KzPd4U00uVYJhlu0");
 
 const OrderSummary = () => {
-  const { total, subtotal, cart } = useCartStore();
-
-  const coupon = ""
-  const isCouponApplied = false
+  const { total, subtotal, cart, coupon, isCouponApplied } = useCartStore();
 
   const savings = subtotal - total;
   const formattedSubtotal = subtotal.toFixed(2);

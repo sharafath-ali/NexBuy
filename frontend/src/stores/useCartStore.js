@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 export const useCartStore = create((set, get) => ({
   cart: [],
   coupon: null,
+  isCouponApplied: false,
   total: 0,
   subtotal: 0,
   loading: false,
@@ -89,5 +90,33 @@ export const useCartStore = create((set, get) => ({
 
   clearCart: async () => {
     set({ cart: [], coupon: null, total: 0, subtotal: 0 });
+  },
+
+  getMyCoupon: async () => {
+    try {
+      const response = await axiosInstance.get("/coupon");
+      set({ coupon: response.data });
+    } catch (error) {
+      console.error("Error fetching cart items:", error);
+      toast.error(error.message || "An error occurred");
+    }
+  },
+
+  applyCoupon: async (code) => {
+    try {
+      const response = await axiosInstance.post("/coupon/validate", { code });
+      set({ coupon: response.data, isCouponApplied: true });
+      get().calculateTotals();
+      toast.success("Coupon applied successfully");
+    } catch (error) {
+      console.error("Error fetching cart items:", error);
+      toast.error(error.message || "An error occurred");
+    }
+  },
+
+  removeCoupon: async () => {
+    set({ coupon: null, isCouponApplied: false });
+    get().calculateTotals();
+    toast.success("Coupon removed successfully");
   },
 }));

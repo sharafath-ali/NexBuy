@@ -29,7 +29,7 @@ export const createCheckoutSession = async (req, res) => {
     let coupon = null;
 
     if (couponCode) {
-      coupon = await Coupon.findOne({ code: couponCode, isActive: true, UserId: req.user._id });
+      coupon = await Coupon.findOne({ code: couponCode, isActive: true, userId: req.user._id });
       if (coupon) {
         const discount = (coupon.discountPercentage / 100) * totalAmount;
         totalAmount -= discount;
@@ -42,10 +42,10 @@ export const createCheckoutSession = async (req, res) => {
       mode: 'payment',
       success_url: `${process.env.CLIENT_URL}/purchase-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.CLIENT_URL}/purchase-cancel`,
-      discount: coupon ? [
+      discounts: coupon ? [
         {
-          coupon: createStripeCoupon(coupon.discountPercentage)
-        }
+          coupon: await createStripeCoupon(coupon.discountPercentage),
+        },
       ] : [],
       metadata: {
         userId: req.user._id.toString(),
@@ -74,6 +74,8 @@ async function createStripeCoupon(discountPercentage) {
 
 
 async function createNewCoupon(userId) {
+  await Coupon.findOneAndDelete({ userId });
+
   const coupon = new Coupon({
     code: "GIFT" + Math.random().toString(36).substring(2, 8).toUpperCase(),
     discountPercentage: 10,

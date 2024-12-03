@@ -8,7 +8,7 @@ const ProductsList = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [fetchProducts]);
+  }, []);
 
   return (
     <motion.div
