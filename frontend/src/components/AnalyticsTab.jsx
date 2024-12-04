@@ -1,35 +1,34 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-
-
+import { axiosInstance } from "../lib/axios";
 import { Users, Package, ShoppingCart, DollarSign } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 const AnalyticsTab = () => {
   const [analyticsData, setAnalyticsData] = useState({
     users: 0,
-    products: 0,
+    Products: 0,
     totalSales: 0,
     totalRevenue: 0,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [dailySalesData, setDailySalesData] = useState([]);
 
-  // useEffect(() => {
-  //   const fetchAnalyticsData = async () => {
-  //     try {
-  //       const response = await axios.get("/analytics");
-  //       setAnalyticsData(response.data.analyticsData);
-  //       setDailySalesData(response.data.dailySalesData);
-  //     } catch (error) {
-  //       console.error("Error fetching analytics data:", error);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchAnalyticsData = async () => {
+      try {
+        const response = await axiosInstance.get("/analytics");
+        setAnalyticsData(response.data.analytics);
+        setDailySalesData(response.data.dailySalesData);
+      } catch (error) {
+        console.error("Error fetching analytics data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  //   fetchAnalyticsData();
-  // }, []);
+    fetchAnalyticsData();
+  }, []);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -46,7 +45,7 @@ const AnalyticsTab = () => {
         />
         <AnalyticsCard
           title='Total Products'
-          value={analyticsData?.products?.toLocaleString()}
+          value={analyticsData?.Products?.toLocaleString()}
           icon={Package}
           color='from-emerald-500 to-green-700'
         />
