@@ -90,7 +90,7 @@ export const useCartStore = create((set, get) => ({
 
   clearCart: async () => {
     try{
-      await axiosInstance.delete("/cart");
+      await axiosInstance.delete("/cart/clear");
       set({ cart: [], coupon: null, total: 0, subtotal: 0 });
       toast.success("Cart cleared successfully");
     } catch (error) {
